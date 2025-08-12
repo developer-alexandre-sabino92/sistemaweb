@@ -1,1 +1,1 @@
-web:gunicorn sistemacooperativa:app
+gunicorn sistemacooperativa:app
