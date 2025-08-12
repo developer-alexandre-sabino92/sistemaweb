@@ -17,3 +17,5 @@ with app.app_context():
     print(usuario2.email)
     print(usuario2.senha)
     print(usuario2.cursos)
+
+
