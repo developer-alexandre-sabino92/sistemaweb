@@ -1,4 +1,3 @@
-
 .card{
   width: 400px;
   border: none;
@@ -43,3 +42,75 @@
  background: #f2f5f8 !important;
 
 }
+
+/* ----- Estilo Geral ----- */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ----- Cards ----- */
+.card {
+    border: none;
+    border-radius: 12px;
+    background-color: #fff;
+    padding: 1rem;
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 576px) {
+    .card {
+        width: 100%;
+    }
+}
+
+/* ----- Estatísticas ----- */
+.stats {
+    background: #f2f5f8 !important;
+    color: #000 !important;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+}
+
+.articles,
+.followers,
+.rating {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.number1,
+.number2,
+.number3 {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #212529;
+}
+
+/* ----- Post ----- */
+.meupost {
+    background: #f2f5f8 !important;
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+/* ----- Badges ----- */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.4em 0.6em;
+}
+
+/* ----- Botões e Inputs ----- */
+input.form-control-lg {
+    border-radius: 12px;
+}
+
+button.btn-lg {
+    border-radius: 12px;
+}
+
