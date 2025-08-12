@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, DateField, DecimalField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange, optional
 from sistemacooperativa.models import Usuario
 from flask_login import current_user
 
@@ -44,6 +44,13 @@ class FormEditarPerfil(FlaskForm):
 
 
 class FormCriarPost(FlaskForm):
-    titulo = StringField('Titulo do Post', validators=[DataRequired(), Length(2, 140)])
-    corpo = TextAreaField('Escreva seu Post Aqui', validators=[DataRequired()])
-    botao_submit = SubmitField('Criar Post')
+    titulo = StringField('Nome do Cliente', validators=[DataRequired(), Length(2, 140)])
+    implantacao = DateField('Data da Implantação',validators=[DataRequired()])
+    numero_contrato = StringField('Número do Contrato', validators=[DataRequired(), Length(2, 140)])
+    cnpj_cpf = StringField('CNPJ ou CPF', validators=[DataRequired(), Length(2, 140)])
+    razao_social = StringField('Razão Social', validators=[DataRequired(), Length(2, 140)])
+    valor_contrato = DecimalField('Valor do Contrato R$', places=2, rounding=None, validators=[DataRequired(), NumberRange(min=0)])
+    bonus_vida = StringField('Bônus por Vida?', validators=[DataRequired(), Length(2, 140)])
+    valor_bonus = DecimalField('Valor do Bônus', places=2, rounding=None, validators=[DataRequired(), NumberRange(min=0)])
+    corpo = StringField('Operadora', validators=[DataRequired(), Length(2, 140)])
+    botao_submit = SubmitField('Cadastrar')
