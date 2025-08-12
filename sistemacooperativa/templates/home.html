@@ -1,35 +1,74 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<div class="container">
-    <h1 style="color:blue">Sistema Cooperativa - Transformando e Inovando</h1>
-    <h2>Soluções para Otimização de Custos</h2>
-    <hr>
-    {% for post in posts %}
-        <div class="row border mt-4 p-3 meupost">
-            <div class="col col-3">
-                <div class="image pe-2">
-                    <img src="{{ url_for('static', filename='fotos_perfil/{}'.format(post.autor.foto_perfil)) }}" class="rounded" width="200">
-                </div>
-                <strong>{{ post.autor.username }}</strong>
+<div class="container mt-4">
 
-
-                    <div class="row justify-content-center">
-                        {% for curso in post.autor.cursos.split(';') %}
-                            <button type="button" class="btn btn-success mt-2 "  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" disabled>{{ curso }}</button>
-                        {% endfor%}
-                    </div>
-
-            </div>
-            <div class="col col-9">
-                <a style="text-decoration:none" href="{{ url_for('exibir_post', post_id=post.id)}}"><h3>{{ post.titulo }}</h3></a>
-                <p>{{ post.corpo }}</p>
-            </div>
-
+    <!-- Barra de busca -->
+    <form method="get" action="{{ url_for('home') }}" class="row g-2 mb-4">
+        <div class="col-sm-10 col-8">
+            <input
+                type="text"
+                class="form-control form-control-lg"
+                name="q"
+                placeholder="🔍 Buscar por nome, razão social, CNPJ/CPF..."
+                value="{{ termo_busca or '' }}"
+            >
         </div>
-    {% endfor %}
+        <div class="col-sm-2 col-4">
+            <button class="btn btn-primary btn-lg w-100">Buscar</button>
+        </div>
+    </form>
 
+    {% if posts %}
+        <div class="row g-4">
+            {% for post in posts %}
+            <div class="col-lg-6 col-md-12">
+                <div class="card shadow-sm h-100">
+
+                    <div class="card-body d-flex flex-column flex-md-row align-items-center">
+
+                        <!-- Foto -->
+                        <div class="text-center mb-3 mb-md-0 me-md-4">
+                            <img src="{{ url_for('static', filename='fotos_perfil/' + (post.autor.foto_perfil or 'default.jpg')) }}"
+                                 class="rounded-circle border"
+                                 width="100" height="100"
+                                 style="object-fit: cover;">
+                            <div class="mt-2">
+                                {% for curso in post.autor.cursos.split(';') if curso %}
+                                    <span class="badge bg-success me-1">{{ curso }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Informações -->
+                        <div class="flex-grow-1">
+                            <h5 class="mb-1">
+                                <a href="{{ url_for('exibir_post', post_id=post.id) }}" class="text-decoration-none text-primary fw-bold">
+                                    {{ post.titulo }}
+                                </a>
+                            </h5>
+                            <p class="text-muted small mb-3">{{ post.razao_social }}</p>
+
+                            <ul class="list-unstyled mb-0">
+                                <li><strong>Operadora:</strong> {{ post.corpo }}</li>
+                                <li><strong>Data Implantação:</strong> {{ post.implantacao | brdate }}</li>
+                                <li><strong>Nº Contrato:</strong> {{ post.numero_contrato }}</li>
+                                <li><strong>CNPJ/CPF:</strong> {{ post.cnpj_cpf }}</li>
+                                <li><strong>Valor Contrato:</strong> {{ post.valor_contrato | currency }}</li>
+                                <li><strong>Bônus por Vida?:</strong> {{ 'Sim' if post.bonus_vida else 'Não' }}</li>
+                                <li><strong>Valor Bônus:</strong> {{ post.valor_bonus | currency }}</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center mt-5" role="alert">
+            Nenhum resultado encontrado para sua busca.
+        </div>
+    {% endif %}
 </div>
-
-
-{%  endblock  %}
+{% endblock %}
