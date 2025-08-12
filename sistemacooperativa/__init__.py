@@ -8,7 +8,10 @@ import locale
 from datetime import datetime
 
 # Configura formatação de moeda e data para o Brasil
-locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+try:
+    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+except locale.Error:
+    locale.setlocale(locale.LC_ALL, '')  # Usa locale padrão do sistema se o pt_BR não existir
 
 def format_currency(value):
     try:
@@ -28,7 +31,10 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'e14fbbd6f299c6454f3094c9db985177'
 if os.getenv("DATABASE_URL"):
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+    uri = os.getenv("DATABASE_URL")
+    if uri.startswith("postgres://"):
+        uri = uri.replace("postgres://", "postgresql://", 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = uri
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cooperativa.db'
 
@@ -43,15 +49,17 @@ app.jinja_env.filters['currency'] = format_currency
 app.jinja_env.filters['brdate'] = format_date
 
 from sistemacooperativa import models
+
+# Verifica e cria tabelas se não existirem
 engine = sqlalchemy.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 inspector = sqlalchemy.inspect(engine)
 if not inspector.has_table("usuario"):
     with app.app_context():
-        database.drop_all()
         database.create_all()
         print("Base de dados criada")
 else:
     print("Base de dados já existente")
 
 from sistemacooperativa import routes
+
 
