@@ -5,6 +5,7 @@ from sistemacooperativa.models import Usuario, Post
 from flask_login import login_user, logout_user, current_user, login_required
 import secrets
 import os
+from sqlalchemy import or_
 from PIL import Image
 
 
@@ -12,8 +13,20 @@ from PIL import Image
 
 @app.route("/")
 def home():
-    posts = Post.query.order_by(Post.id.desc())
-    return render_template('home.html', posts=posts)
+    termo_busca = request.args.get("q", "").strip()
+
+    if termo_busca:
+        posts = Post.query.filter(
+            or_(
+                    Post.titulo.ilike(f"%{termo_busca}%"),
+                    Post.razao_social.ilike(f"%{termo_busca}%"),
+                    Post.cnpj_cpf.ilike(f"%{termo_busca}%")
+                )
+        ).order_by(Post.id.desc()).all()
+    else:
+        posts = Post.query.order_by(Post.id.desc()).all()
+
+    return render_template('home.html', posts=posts, termo_busca=termo_busca)
 
 @app.route("/contato")
 def contato():
@@ -74,10 +87,10 @@ def perfil():
 def criar_post():
     form = FormCriarPost()
     if form.validate_on_submit():
-        post = Post(titulo=form.titulo.data, corpo=form.corpo.data, autor=current_user)
+        post = Post(titulo=form.titulo.data, implantacao=form.implantacao.data, numero_contrato=form.numero_contrato.data,cnpj_cpf=form.cnpj_cpf.data,razao_social=form.razao_social.data, valor_contrato=form.valor_contrato.data, bonus_vida=form.bonus_vida.data, valor_bonus=form.valor_bonus.data, corpo=form.corpo.data, autor=current_user)
         database.session.add(post)
         database.session.commit()
-        flash('Post Criado com Sucesso', 'alert-success')
+        flash('Cliente Cadastrado com Sucesso', 'alert-success')
         return redirect(url_for('home'))
     return render_template('criarpost.html', form=form)
 
@@ -133,8 +146,22 @@ def exibir_post(post_id):
         if request.method == 'GET':
             form.titulo.data = post.titulo
             form.corpo.data = post.corpo
+            form.implantacao.data = post.implantacao
+            form.numero_contrato.data = post.numero_contrato
+            form.cnpj_cpf.data = post.cnpj_cpf
+            form.razao_social.data = post.razao_social
+            form.valor_contrato.data = post.valor_contrato
+            form.bonus_vida.data = post.bonus_vida
+            form.valor_bonus.data = post.valor_bonus
         elif form.validate_on_submit():
             post.titulo = form.titulo.data
+            post.implantacao = form.implantacao.data
+            post.numero_contrato = form.numero_contrato.data
+            post.cnpj_cpf = form.cnpj_cpf.data
+            post.razao_social = form.razao_social.data
+            post.valor_contrato = form.valor_contrato.data
+            post.bonus_vida = form.bonus_vida.data
+            post.valor_bonus = form.valor_bonus.data
             post.corpo = form.corpo.data
             database.session.commit()
             flash('Post Atualizado com Sucesso', 'alert-success')
@@ -155,7 +182,3 @@ def excluir_post(post_id):
         return redirect(url_for('home'))
     else:
         abort(403)
-
-
-
-
