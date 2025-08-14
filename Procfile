@@ -1,1 +1,1 @@
-gunicorn sistemacooperativa:app
+gunicorn PythonProject:app
